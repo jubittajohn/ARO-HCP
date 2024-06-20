@@ -54,6 +54,9 @@ param maestroInfraResourceGroup string
 @description('The name of the eventgrid namespace for Maestro.')
 param maestroEventGridNamespacesName string
 
+@description('The number of the AKS cluster in the resource group')
+param aksClusterCount int = 1
+
 module mgmtCluster '../modules/aks-cluster-base.bicep' = {
   name: 'aks_base_cluster'
   scope: resourceGroup()
@@ -71,6 +74,7 @@ module mgmtCluster '../modules/aks-cluster-base.bicep' = {
     workloadIdentities: workloadIdentities
     aksKeyVaultName: aksKeyVaultName
     deployUserAgentPool: true
+    aksClusterCount: aksClusterCount
   }
 }
 
