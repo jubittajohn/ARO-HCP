@@ -685,11 +685,12 @@ func (f *Frontend) ArmSubscriptionPut(writer http.ResponseWriter, request *http.
 		return
 	}
 
-	writer.WriteHeader(http.StatusCreated)
 	_, err = writer.Write(resp)
 	if err != nil {
 		f.logger.Error(err.Error())
 	}
+
+	writer.WriteHeader(http.StatusCreated)
 }
 
 func (f *Frontend) ArmDeploymentPreflight(writer http.ResponseWriter, request *http.Request) {
