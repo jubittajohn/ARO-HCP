@@ -70,7 +70,7 @@ personal-runtime-config:
 	OIDC_ISSUER_BASE_ENDPOINT=$(shell az storage account show -n ${OIDC_STORAGE_ACCOUNT} -g ${RESOURCEGROUP} --query primaryEndpoints.web -o tsv) && \
 	OCP_ACR_URL=$(shell az acr show -n ${OCP_ACR_NAME} --query loginServer -o tsv) && \
 	OCP_ACR_RESOURCE_ID=$(shell az acr show -n ${OCP_ACR_NAME} --query id -o tsv) && \
-	../templatize.sh $(DEPLOY_ENV) deploy/azure-runtime-config.tmpl.yaml deploy/azure-runtime-config.yaml \
+	../templatize.sh $(DEPLOY_ENV) deploy/azure-runtime-config.tmpl.json deploy/azure-runtime-config.json \
 		-e tenantId=$${TENANT_ID},ocpAcrResourceId=$${OCP_ACR_RESOURCE_ID},ocpAcrResourceUrl=$${OCP_ACR_URL},oidc_container='$$web',oidc_issuer_base_url=$${OIDC_ISSUER_BASE_ENDPOINT},oidc_service_url=$${OIDC_BLOB_SERVICE_ENDPOINT}
 	@cat deploy/azure-runtime-config.yaml
 .PHONY: personal-runtime-config
@@ -108,7 +108,7 @@ shared-storage-runtime-config:
 	OIDC_ISSUER_BASE_ENDPOINT=$(shell az storage account show -n ${SHARED_OIDC_STORAGE_ACCOUNT_NAME} -g ${SHARED_OIDC_RG_NAME} --query primaryEndpoints.web -o tsv) && \
 	OCP_ACR_URL=$(shell az acr show -n ${OCP_ACR_NAME} --query loginServer -o tsv) && \
 	OCP_ACR_RESOURCE_ID=$(shell az acr show -n ${OCP_ACR_NAME} --query id -o tsv) && \
-	../templatize.sh $(DEPLOY_ENV) deploy/azure-runtime-config.tmpl.yaml deploy/azure-runtime-config.yaml \
+	../templatize.sh $(DEPLOY_ENV) deploy/azure-runtime-config.tmpl.json deploy/azure-runtime-config.json \
 		-e tenantId=$${TENANT_ID},ocpAcrResourceId=$${OCP_ACR_RESOURCE_ID},ocpAcrResourceUrl=$${OCP_ACR_URL},oidc_container='$$web',oidc_issuer_base_url=$${OIDC_ISSUER_BASE_ENDPOINT},oidc_service_url=$${OIDC_BLOB_SERVICE_ENDPOINT}
 	@cat deploy/azure-runtime-config.yaml
 .PHONY: shared-storage-runtime-config
