@@ -2,11 +2,15 @@ package config
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"reflect"
+	"strings"
 	"text/template"
 
+	"github.com/santhosh-tekuri/jsonschema/v6"
 	"gopkg.in/yaml.v3"
 )
 
@@ -41,7 +45,7 @@ func (c *ConfigReplacements) AsMap() map[string]interface{} {
 type ConfigProvider interface {
 	Validate(cloud, deployEnv string) error
 	GetVariables(cloud, deployEnv, region string, configReplacements *ConfigReplacements) (Variables, error)
-	GetDeployEnvVariables(cloud, deployEnv string, configReplacements *ConfigReplacements) (Variables, error)
+	GetDeployEnvVariables(cloud, deployEnv string, configReplacements *ConfigReplacements) (Variables, string, error)
 	GetRegions(cloud, deployEnv string) ([]string, error)
 	GetRegionOverrides(cloud, deployEnv, region string, configReplacements *ConfigReplacements) (Variables, error)
 }
@@ -89,8 +93,32 @@ func mergeVariables(base, override Variables) Variables {
 	return base
 }
 
+func validateSchema(variables Variables, schemaFile string) {
+	c := jsonschema.NewCompiler()
+	sch, err := c.Compile(schemaFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	variablesAsBytes, err := json.Marshal(variables)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	variablesAsInstance, err := jsonschema.UnmarshalJSON(strings.NewReader(string(variablesAsBytes)))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = sch.Validate(variablesAsInstance)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
 func (cp *configProviderImpl) GetVariables(cloud, deployEnv, region string, configReplacements *ConfigReplacements) (Variables, error) {
-	variables, err := cp.GetDeployEnvVariables(cloud, deployEnv, configReplacements)
+	variables, schemaFile, err := cp.GetDeployEnvVariables(cloud, deployEnv, configReplacements)
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +129,9 @@ func (cp *configProviderImpl) GetVariables(cloud, deployEnv, region string, conf
 		return nil, err
 	}
 	mergeVariables(variables, regionOverrides)
+
+	// validate schema
+	validateSchema(variables, schemaFile)
 
 	return variables, nil
 }
@@ -117,17 +148,21 @@ func (cp *configProviderImpl) Validate(cloud, deployEnv string) error {
 	if ok := config.HasDeployEnv(cloud, deployEnv); !ok {
 		return fmt.Errorf("the deployment env %s is not found under cloud %s", deployEnv, cloud)
 	}
+
+	if !config.HasSchema() {
+		return fmt.Errorf("$schema not found in config")
+	}
 	return nil
 }
 
-func (cp *configProviderImpl) GetDeployEnvVariables(cloud, deployEnv string, configReplacements *ConfigReplacements) (Variables, error) {
+func (cp *configProviderImpl) GetDeployEnvVariables(cloud, deployEnv string, configReplacements *ConfigReplacements) (Variables, string, error) {
 	config, err := cp.loadConfig(configReplacements)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	err = cp.Validate(cloud, deployEnv)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	variables := Variables{}
@@ -135,7 +170,7 @@ func (cp *configProviderImpl) GetDeployEnvVariables(cloud, deployEnv string, con
 	mergeVariables(variables, config.GetCloudOverrides(cloud))
 	mergeVariables(variables, config.GetDeployEnvOverrides(cloud, deployEnv))
 
-	return variables, nil
+	return variables, config.GetSchema(), nil
 }
 
 func (cp *configProviderImpl) GetRegions(cloud, deployEnv string) ([]string, error) {

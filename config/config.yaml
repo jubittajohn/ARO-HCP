@@ -1,3 +1,4 @@
+$schema: config.schema.json 
 defaults:
   region: {{ .ctx.region }}
   # Subscriptions

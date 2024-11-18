@@ -8,7 +8,7 @@ type configProviderImpl struct {
 	config string
 }
 
-type Variables map[string]interface{}
+type Variables map[string]any
 
 func NewVariableOverrides() VariableOverrides {
 	return &variableOverrides{}
@@ -20,11 +20,14 @@ type VariableOverrides interface {
 	GetDeployEnvOverrides(cloud, deployEnv string) Variables
 	GetRegionOverrides(cloud, deployEnv, region string) Variables
 	GetRegions(cloud, deployEnv string) []string
+	GetSchema() string
+	HasSchema() bool
 	HasCloud(cloud string) bool
 	HasDeployEnv(cloud, deployEnv string) bool
 }
 
 type variableOverrides struct {
+	Schema   string    `yaml:"$schema"`
 	Defaults Variables `yaml:"defaults"`
 	// key is the cloud alias
 	Overrides map[string]*struct {
@@ -36,6 +39,14 @@ type variableOverrides struct {
 			Overrides map[string]Variables `yaml:"regions"`
 		} `yaml:"environments"`
 	} `yaml:"clouds"`
+}
+
+func (vo *variableOverrides) GetSchema() string {
+	return vo.Schema
+}
+
+func (vo *variableOverrides) HasSchema() bool {
+	return vo.Schema != ""
 }
 
 func (vo *variableOverrides) GetDefaults() Variables {
