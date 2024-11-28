@@ -142,8 +142,20 @@
           "cosmosDB"
         ]
       },
-      "globalRG": {
-        "type": "string"
+      "global": {
+        "type": "object",
+        "properties": {
+          "rg": {
+            "type": "string"
+          },
+          "subscription": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "rg",
+          "subscription"
+        ]
       },
       "hypershift": {
         "type": "object",
@@ -610,7 +622,7 @@
       "externalDNS",
       "firstPartyAppClientId",
       "frontend",
-      "globalRG",
+      "global",
       "hypershift",
       "hypershiftOperator",
       "imageSync",
