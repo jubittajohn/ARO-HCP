@@ -32,7 +32,7 @@ param externalDNSServiceAccountName = '{{ .hypershift.externalDNSServiceAccountN
 param regionalDNSZoneName = '{{ .regionalDNSSubdomain}}.{{ .baseDnsZoneName }}'
 
 // ACR
-param acrPullResourceGroups = ['{{ .serviceComponentAcrResourceGroups }}']
+param acrPullResourceGroups = ['{{ .global.rg }}']
 
 // Region
 param regionalResourceGroup = '{{ .regionRG }}'
