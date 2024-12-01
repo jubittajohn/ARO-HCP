@@ -9,4 +9,5 @@ configurations/dev-role-assignments.bicepparam
 configurations/cs-integ-msi.bicepparam
 configurations/mock-identities.bicepparam
 configurations/global.bicepparam
+configurations/global-roles.bicepparam
 config.mk
