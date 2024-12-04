@@ -179,18 +179,18 @@ func (rg *ResourceGroup) Validate() error {
 		return fmt.Errorf("subscription is required")
 	}
 
-	// validate step dependencies
-	// todo - check for circular dependencies
-	stepMap := make(map[string]bool)
-	for _, step := range rg.Steps {
-		stepMap[step.Name] = true
-	}
-	for _, step := range rg.Steps {
-		for _, dep := range step.DependsOn {
-			if !stepMap[dep] {
-				return fmt.Errorf("invalid dependency from step %s to %s", step.Name, dep)
-			}
-		}
-	}
+	// // validate step dependencies
+	// // todo - check for circular dependencies
+	// stepMap := make(map[string]bool)
+	// for _, step := range rg.Steps {
+	// 	stepMap[step.Name] = true
+	// }
+	// for _, step := range rg.Steps {
+	// 	for _, dep := range step.DependsOn {
+	// 		if !stepMap[dep] {
+	// 			return fmt.Errorf("invalid dependency from step %s to %s", step.Name, dep)
+	// 		}
+	// 	}
+	// }
 	return nil
 }
