@@ -43,6 +43,14 @@ param regionalResourceGroup string
 @description('The names of the ACR resource groups / will be refactored soon into dedicated ACR Resource IDs')
 param acrResourceGroupNames array = []
 
+@description(
+  '''
+  Defines if the custom ACR token management role should be used to grant
+  CS token management permissions on the OCP ACR
+  '''
+)
+param useCustomACRTokenManagementRole bool
+
 //
 //   P O S T G R E S
 //
@@ -165,6 +173,7 @@ module acrManageTokenRole '../modules/acr/acr-permissions.bicep' = [
     params: {
       principalId: clusterServiceManagedIdentityPrincipalId
       grantManageTokenAccess: true
+      useCustomManageTokenRole: useCustomACRTokenManagementRole
       acrResourceGroupid: clustersServiceAcrResourceGroups[i].id
     }
   }
