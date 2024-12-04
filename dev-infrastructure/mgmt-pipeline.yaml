@@ -20,6 +20,8 @@ resourceGroups:
     - name: clusterServiceMIResourceId
       step: regionOutput
       output: cs.msi.resourceID
+    dependsOn:
+    - regionOutput
   - name: enable-metrics
     action: Shell
     command: ["scripts/enable-aks-metrics.sh"]
