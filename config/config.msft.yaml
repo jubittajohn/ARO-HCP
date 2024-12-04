@@ -27,7 +27,14 @@ defaults:
     etcd:
       kvName: arohcp-etcd-{{ .ctx.regionShort }}
       kvSoftDelete: true
-
+    istio:
+      old: "asm-1-22"
+      new: ""
+      tag: "prod-stable"
+    istioctl:
+      version: "1.23.1"
+      url: "https://istio.io/downloadIstio"
+      
   # MGMT cluster specifics
   mgmt:
     clusterServiceResourceId: 'todo'
