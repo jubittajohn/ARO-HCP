@@ -24,7 +24,7 @@ type Step struct {
 	Name            string   `yaml:"name"`
 	Action          string   `yaml:"action"`
 	Command         string   `yaml:"command,omitempty"`
-	Env             []EnvVar `yaml:"env,omitempty"`
+	Env             []EnvVar `yaml:"variables,omitempty"`
 	Template        string   `yaml:"template,omitempty"`
 	Parameters      string   `yaml:"parameters,omitempty"`
 	DependsOn       []string `yaml:"dependsOn,omitempty"`
@@ -43,10 +43,11 @@ type EnvVar struct {
 	Name      string `yaml:"name"`
 	ConfigRef string `yaml:"configRef,omitempty"`
 	Value     string `yaml:"value,omitempty"`
+	Input     Input  `yaml:"input,omitempty"`
 }
 
 type Input struct {
 	Name   string `yaml:"name"`
 	Step   string `yaml:"step"`
-	Output string `yaml:"output"`
+	Output string `yaml:"output,omitempty"`
 }
