@@ -26,7 +26,7 @@ resourceGroups:
   - name: enable-metrics
     action: Shell
     command: scripts/enable-aks-metrics.sh
-    variables:
+    variables: # renamed from `env`
     - name: RESOURCEGROUP
       configRef: mgmt.rg
     - name: AKS_NAME
