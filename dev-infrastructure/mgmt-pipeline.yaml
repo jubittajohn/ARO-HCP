@@ -19,7 +19,7 @@ resourceGroups:
     variables: # renamed from `input`
     - name: mgmt.clusterServiceResourceId # creates a scopebinding for this var using `$serviceResourceDefinition...` for `replace`
       input:
-        step: mgmt
+        step: regionOutput
         name: cs
     dependsOn:
     - regionOutput
