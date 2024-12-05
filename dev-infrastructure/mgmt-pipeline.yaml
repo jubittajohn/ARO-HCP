@@ -1,4 +1,4 @@
-serviceGroup: Microsoft.Azure.ARO.Test
+serviceGroup: Microsoft.Azure.ARO.HCP.Management.Infra
 rolloutName: Management Cluster Rollout
 resourceGroups:
 - name: {{ .svc.rg }}
@@ -16,6 +16,11 @@ resourceGroups:
     action: ARM
     template: templates/mgmt-cluster.bicep
     parameters: configurations/mgmt-cluster.tmpl.bicepparam
+    variables: # renamed from `input`
+    - name: mgmt.clusterServiceResourceId # creates a scopebinding for this var using `$serviceResourceDefinition...` for `replace`
+      input:
+        step: mgmt
+        name: cs
     inputs:
     - name: clusterServiceMIResourceId
       step: regionOutput
@@ -23,7 +28,7 @@ resourceGroups:
   - name: enable-metrics
     action: Shell
     command: scripts/enable-aks-metrics.sh
-    env:
+    variables:
     - name: RESOURCEGROUP
       configRef: mgmt.rg
     - name: AKS_NAME
